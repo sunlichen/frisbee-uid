@@ -8,7 +8,7 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
 对外提供两个接口获取UID，1、实时的请求并根据当前时间戳等相关值计算UID并返回；2、预处理将UID放入ArrayBlockingQueue队列中缓存，请求UID时通过从队列中获取并返回。
 单机Jmeter测试接口TPS:1.4万/秒，单元测试内部生成UID接口TPS：81万/秒（环境：联想T450 cpu:i5-5200 2.2GHz 内存8G，Ubuntu 20.04.1 LTS ）
 
-依赖版本：[Java8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)及以上版本,
+依赖版本：[Java8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)及以上版本
 
 
 系统特点
@@ -31,8 +31,8 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
 * 5位
   工作节点ID，可配置最大正整数是2^5−1=31，可配置数据范围（0 到 31）。
 * 12位
-  序列号，用来记录同毫秒内产生的不同ID。最大正整数是2^12−1=4095，表示同一机器同一时间截（毫秒)内产生最多4095个ID序号。
-  ![雪花算法](doc/snowflake.jpg)
+  序列号，用来记录同毫秒内产生的不同ID。最大正整数是2^12−1=4095，表示同一机器同一时间截（毫秒)内产生最多4095个ID序号。<br/>
+  ![雪花算法](https://github.com/sunlichen/frisbee-uid/blob/main/doc/snowflake.jpg)
 
 
 飞盘算法（FrisbeeUid）实现
@@ -48,9 +48,9 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
   所以考虑到ID使用效率不高的情况，将此ID进行分片 通过配置[frisbeeUid.sequenceModulo]和[frisbeeUid.sectionNode]将ID按模值进行分片，由不同的服务生成，使不同分片的服务构成集群从而提高吞吐量。
 
 
-1bit|41bits|5bits|5bits|12bits
---|:--:|:--:|--:
-固定值|当时时间戳+NTP时间差值-配置起始时间|数据中心ID|工作节点ID|序号
+|1bit|41bits|5bits|5bits|12bits|
+--:|:--:|:--:|:--
+|固定值|当时时间戳+NTP时间差值-配置起始时间|数据中心ID|工作节点ID|序号|
 
 
 *** 数据中心ID和工作节点ID位数，可根据实际情况进行修改[代码文件](src/main/java/com/sunlichen/frisbee/enums/SnowFlakeBits.java)中位数长度，位数可调整给时间戳或工作节点ID ***
@@ -75,9 +75,9 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
 
 压力测试结果
 ----------------------------------
-+ ![系统运行情况jvisualvm](doc/jvisualvm1.png)
-+ ![Jmeter汇总报告](doc/jmeter1.png)
-+ ![Jmeter聚合报告](doc/jmeter2.png)
++ ![系统运行情况jvisualvm](https://github.com/sunlichen/frisbee-uid/blob/main/doc/jvisualvm1.png)
++ ![Jmeter汇总报告](https://github.com/sunlichen/frisbee-uid/blob/main/doc/jmeter1.png)
++ ![Jmeter聚合报告](https://github.com/sunlichen/frisbee-uid/blob/main/doc/jmeter2.png)
 
 
 Quick Start

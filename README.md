@@ -14,8 +14,8 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
 系统特点
 --------------------
 1. 基于NTP时间服务，有效避免因时间回拨导致的UID重复。<br/>
-2. 通过workerId和DatacenterId实现的分布式部署（雪花算法）。<br/>
-3. 同服务节点内（相同的workerId和DatacenterId）基于分片可实现集群部署，避免单点故障。<br/>
+2. 通过workerId和datacenterId实现的分布式部署（雪花算法）。<br/>
+3. 同服务节点内（相同的workerId和datacenterId）基于分片可实现集群部署，避免单点故障。<br/>
 4. 基于ArrayBlockingQueue实现的内部队列，避免瞬时压力导致的服务响应过慢，提高服务可用性。<br/>
 5. 无第三方依赖，减少依赖系统故障可能性。<br/>
 
@@ -47,12 +47,11 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
   序号ID，1毫秒内最多可用4095个数值，也就是1秒内可生成409万个ID，对外提供服务时受限于各种因素，实际生成使用的ID无法达到此数值，
   所以考虑到ID使用效率不高的情况，将此ID进行分片 通过配置[frisbeeUid.sequenceModulo]和[frisbeeUid.sectionNode]将ID按模值进行分片，由不同的服务生成，使不同分片的服务构成集群从而提高吞吐量。
 
-<table>
-<tr><td>1bit</td><td>41bits</td><td>5bits</td><td>5bits</td><td>12bits</td></tr>
-<tr><td>固定值</td><td>当时时间戳+NTP时间差值-配置起始时间</td><td>数据中心ID</td><td>工作节点ID</td><td>序号</td></tr>
-</table>
+|1bit  |41bits                             |5bits     |5bits     |12bits|
+|------|-----------------------------------|----------|----------|------|
+|固定值|当时时间戳+NTP时间差值-配置起始时间|数据中心ID|工作节点ID|序号  |
 
-* 数据中心ID和工作节点ID位数，可根据实际情况进行修改[代码文件](src/main/java/com/sunlichen/frisbee/enums/SnowFlakeBits.java)中位数长度，位数可调整给时间戳或工作节点ID。
+*数据中心ID和工作节点ID位数，可根据实际情况进行修改[代码文件](src/main/java/com/sunlichen/frisbee/enums/SnowFlakeBits.java)中位数长度，位数可调整给时间戳或工作节点ID。*
 
 
 飞盘算法与雪花算法的比较
@@ -71,7 +70,7 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
 * [http://ip:port/queue_uid]
   从队列中获取已生成的UID
 * [http://ip:port/status]
-  状态检查，返回json串数据，格式：[{"Date":"服务根据差值修正后的当前","StartStamp":"配置文件中配置的起始时间","datacenterId":"数据中心ID","workerId":"工作节点ID","SequenceModulo":"分片模值","SectionNode":"分片节点","TolerateTimeDiff":"最大容忍时间差异毫秒","count":"已取得UID数量（最大值2147483647，循环计数）","LastStamp":"最后获取UID时间","QueueSize":"当前队列长度"}]
+  状态检查，返回json串数据，格式：[{"Date":"服务根据差值修正后的当前时间","StartStamp":"配置文件中配置的起始时间","datacenterId":"数据中心ID","workerId":"工作节点ID","SequenceModulo":"分片模值","SectionNode":"分片节点","TolerateTimeDiff":"最大容忍时间差异毫秒","count":"已取得UID数量（最大值2147483647，循环计数）","LastStamp":"最后获取UID时间","QueueSize":"当前队列长度"}]
 
 压力测试结果
 ----------------------------------
@@ -79,6 +78,11 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
 + ![Jmeter汇总报告](https://github.com/sunlichen/frisbee-uid/blob/main/doc/jmeter1.png)
 + ![Jmeter聚合报告](https://github.com/sunlichen/frisbee-uid/blob/main/doc/jmeter2.png)
 
+极端场景测试
+----------------------------------
+* 测试目的：验证本地时间重复的情况下，生成的UID是否会重复。
+* 测试方式：固定一个时间段，连续回调，使本地时间在某一个时间段内循环。
+* 测试结论：无重复情况。实现机制为当时间回调时会大于设定差值，触发同步NTP时间差值任务，取得差值后进行后续处理，在计算UID时使用的时间戳为真实的NTP时间戳，所以不会重复。
 
 Quick Start
 ===================

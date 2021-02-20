@@ -47,13 +47,13 @@ Frisbee Uid Generator 是JAVA语言实现的，基于[雪花算法(Snowflake)](h
   序号ID，1毫秒内最多可用4095个数值，也就是1秒内可生成409万个ID，对外提供服务时受限于各种因素，实际生成使用的ID无法达到此数值，
   所以考虑到ID使用效率不高的情况，将此ID进行分片 通过配置[frisbeeUid.sequenceModulo]和[frisbeeUid.sectionNode]将ID按模值进行分片，由不同的服务生成，使不同分片的服务构成集群从而提高吞吐量。
 
+<table>
+<tr><td>1bit</td><td>41bits</td><td>5bits</td><td>5bits</td><td>12bits</td></tr>
+<tr><td>固定值</td><td>当时时间戳+NTP时间差值-配置起始时间</td><td>数据中心ID</td><td>工作节点ID</td><td>序号</td></tr>
+</table>
 
-|1bit|41bits|5bits|5bits|12bits|
---:|:--:|:--:|:--
-|固定值|当时时间戳+NTP时间差值-配置起始时间|数据中心ID|工作节点ID|序号|
+* 数据中心ID和工作节点ID位数，可根据实际情况进行修改[代码文件](src/main/java/com/sunlichen/frisbee/enums/SnowFlakeBits.java)中位数长度，位数可调整给时间戳或工作节点ID。
 
-
-*** 数据中心ID和工作节点ID位数，可根据实际情况进行修改[代码文件](src/main/java/com/sunlichen/frisbee/enums/SnowFlakeBits.java)中位数长度，位数可调整给时间戳或工作节点ID ***
 
 飞盘算法与雪花算法的比较
 --------------------------------

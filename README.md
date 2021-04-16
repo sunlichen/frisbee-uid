@@ -110,9 +110,6 @@ mvn spring-boot:run
 * [http://localhost:8080/status](http://localhost:8080/status)
 
 
-本人目前在找工作有工作机会可以推荐给我，感谢! toMail: sun.lc@foxmail.com
-
-
 参考资料：
 --------------------------
 + https://github.com/twitter-archive/snowflake/blob/snowflake-2010/src/main/scala/com/twitter/service/snowflake/IdWorker.scala
